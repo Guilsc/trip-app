@@ -6,5 +6,5 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:80"
-    container_name: trip-app-vue
+      - "80:80"
+    container_name: trip_app_vue

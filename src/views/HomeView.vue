@@ -1,98 +1,26 @@
 <template>
   <div class="page">
     <div class="card">
-      <div class="card-section text-center q-pa-md">
-        <div class="text-h3 text-tertiary q-mb-md">
-          <q-icon name="flight" size="4rem" color="secondary" />
-          Bem-vindo ao Trip App!
-        </div>
-        <div class="text-h6 text-grey-7 q-mb-lg">Olá, {{ authStore.user?.name }}! 👋</div>
-        <div class="text-body1 text-grey-6 q-mb-xl">
-          Sua aplicação de gerenciamento de viagens está pronta para uso.
-        </div>
-        <q-btn color="secondary" label="Criar Viagem" @click="openCreateTripDialog" />
-      </div>
-
-      <q-card class="q-pa-md q-mb-md" flat bordered>
-        <div class="row q-col-gutter-md">
-          <div class="col-12 col-md-6">
-            <q-input dense outlined v-model="filter.destination" label="Destino" />
-          </div>
-          <div class="col-12 col-md-6">
-            <q-select
-              dense
-              outlined
-              v-model="filter.status"
-              multiple
-              :options="statusOptions"
-              label="Status"
-            />
-          </div>
-        </div>
-        <div class="row justify-end q-mt-md">
-          <q-btn flat color="primary" label="Limpar Filtros" @click="clearFilters" />
-          <q-btn color="secondary" class="q-ml-sm" label="Aplicar Filtros" @click="applyFilters" />
-        </div>
-      </q-card>
-
+      <WelcomeCard :userName="authStore.user?.name || ''" @create-trip="openCreateTripDialog" />
+      <TripFilters :filter="filter" :statusOptions="statusOptions" @clear-filters="clearFilters" @apply-filters="applyFilters" />
       <div class="q-mt-xl">
-        <q-table
-          flat bordered
-          title="Minhas Viagens"
-          :rows="filteredTrips"
-          :columns="columns"
-          row-key="id"
-        >
-          <template v-slot:body-cell-actions="props">
-            <q-td :props="props">
-              <q-btn icon="edit" size="sm" flat dense @click="openEditTripDialog(props.row)" :disable="authStore.user?.role !== 'admin'" />
-            </q-td>
-          </template>
-        </q-table>
+        <TripTable :rows="filteredTrips" :columns="columns" :isAdmin="authStore.user?.role === 'admin'" @edit-trip="openEditTripDialog" />
       </div>
     </div>
-
-    <q-dialog v-model="showCreateTripDialog">
-      <q-card style="width: 500px; max-width: 80vw;">
-        <q-card-section>
-          <div class="text-h6">Criar Nova Viagem</div>
-        </q-card-section>
-
-        <q-card-section>
-          <q-input dense class="q-mb-md" outlined v-model="newTrip.destination" label="Destino" />
-          <q-input dense class="q-mb-md" outlined v-model="newTrip.departure_date" label="Data de Partida" type="date" stack-label />
-          <q-input dense outlined v-model="newTrip.return_date" label="Data de Retorno" type="date" stack-label />
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="Cancelar" color="primary" v-close-popup />
-          <q-btn label="Criar" color="secondary" @click="createTrip" :disable="isCreateTripFormInvalid" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
-
-    <q-dialog v-model="showEditTripDialog">
-      <q-card style="width: 500px; max-width: 80vw;">
-        <q-card-section>
-          <div class="text-h6">Editar Status da Viagem</div>
-        </q-card-section>
-
-        <q-card-section>
-          <q-select
-            dense
-            outlined
-            v-model="selectedStatus"
-            :options="editStatusOptions"
-            label="Status"
-          />
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn flat label="Cancelar" color="primary" v-close-popup />
-          <q-btn label="Salvar" color="secondary" @click="updateTripStatus" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+    <CreateTripDialog
+      :modelValue="showCreateTripDialog"
+      :trip="newTrip"
+      :isInvalid="isCreateTripFormInvalid"
+      @cancel="showCreateTripDialog = false"
+      @create="createTripFromDialog"
+    />
+    <EditTripDialog
+      :modelValue="showEditTripDialog"
+      :selectedStatus="selectedStatus"
+      :statusOptions="editStatusOptions"
+      @cancel="showEditTripDialog = false"
+      @save="updateTripStatusFromDialog"
+    />
   </div>
 </template>
 
@@ -100,7 +28,13 @@
 import { ref, onMounted, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { tripService } from '@/services/api'
-import { QTableColumn, useQuasar } from 'quasar'
+import { useQuasar } from 'quasar'
+import type { QTableProps } from 'quasar'
+import WelcomeCard from '@/components/WelcomeCard.vue'
+import TripFilters from '@/components/TripFilters.vue'
+import TripTable from '@/components/TripTable.vue'
+import CreateTripDialog from '@/components/CreateTripDialog.vue'
+import EditTripDialog from '@/components/EditTripDialog.vue'
 
 const authStore = useAuthStore()
 const originalTrips = ref<any[]>([])
@@ -165,11 +99,15 @@ const isCreateTripFormInvalid = computed(() => {
   return !newTrip.value.destination || !newTrip.value.departure_date || !newTrip.value.return_date
 })
 
-const columns: QTableColumn[] = [
+// Se precisar de tipagem para columns, pode usar:
+// type TableColumn = { name: string; label: string; field: string; align?: string; sortable?: boolean; };
+// const columns: TableColumn[] = [...];
+
+const columns: QTableProps['columns'] = [
   { name: 'destination', align: 'left', label: 'Destino', field: 'destination', sortable: true },
-  { name: 'departure_date', align: 'left', label: 'Data de Partida', field: 'departure_date', sortable: true, format: (val) => new Date(val).toLocaleDateString() },
-  { name: 'return_date', align: 'left', label: 'Data de Retorno', field: 'return_date', sortable: true, format: (val) => new Date(val).toLocaleDateString() },
-  { name: 'status', align: 'center', label: 'Status', field: (row) => row.status.name.toLocaleLowerCase(), sortable: true },
+  { name: 'departure_date', align: 'left', label: 'Data de Partida', field: 'departure_date', sortable: true, format: (val: string) => new Date(val).toLocaleDateString() },
+  { name: 'return_date', align: 'left', label: 'Data de Retorno', field: 'return_date', sortable: true, format: (val: string) => new Date(val).toLocaleDateString() },
+  { name: 'status', align: 'center', label: 'Status', field: (row: any) => row.status.name.toLocaleLowerCase(), sortable: true },
   { name: 'actions', align: 'right', label: 'Ações', field: 'actions' }
 ]
 
@@ -266,6 +204,16 @@ const createTrip = async () => {
     })
     console.error('Erro ao criar viagem:', err)
   }
+}
+
+// Substituir métodos de dialog para integração com os componentes
+const createTripFromDialog = (trip: any) => {
+  newTrip.value = trip
+  createTrip()
+}
+const updateTripStatusFromDialog = (status: any) => {
+  selectedStatus.value = status
+  updateTripStatus()
 }
 
 </script>

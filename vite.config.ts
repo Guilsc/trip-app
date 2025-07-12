@@ -19,4 +19,8 @@ export default defineConfig({
     __VUE_OPTIONS_API__: true,
     __VUE_PROD_DEVTOOLS__: false,
   },
+  server: {
+    host: '0.0.0.0',
+    port: 5173
+  },
 })

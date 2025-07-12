@@ -44,6 +44,19 @@ npm run dev
 
 4. Acesse a aplicação em `http://localhost:5173`
 
+## 🐳 Rodando com Docker
+
+Alternativamente, você pode executar a aplicação usando Docker.
+
+1.  Certifique-se de ter o Docker e o Docker Compose instalados.
+2.  Execute o seguinte comando na raiz do projeto:
+
+    ```bash
+    docker-compose up -d
+    ```
+
+3.  A aplicação estará disponível em `http://localhost:5173`.
+
 ## 🔧 Configuração da API
 
 A aplicação está configurada para conectar com uma API local na porta 8000. Certifique-se de que sua API esteja rodando em `http://localhost:8000`.

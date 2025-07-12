@@ -42,7 +42,7 @@ npm install
 npm run dev
 ```
 
-4. Acesse a aplicação em `http://localhost:5173`
+4. Acesse a aplicação em `http://localhost:80`
 
 ## 🐳 Rodando com Docker
 
@@ -63,9 +63,9 @@ A aplicação está configurada para conectar com uma API local na porta 8000. C
 
 ### Endpoints esperados:
 
-- `POST /api/auth/login` - Login de usuário
-- `POST /api/auth/register` - Registro de usuário
-- `GET /api/auth/me` - Obter dados do usuário atual
+- `POST /api/login` - Login de usuário
+- `POST /api/register` - Registro de usuário
+- `GET /api/user` - Obter dados do usuário atual
 
 ## 📱 Telas
 
@@ -86,8 +86,8 @@ A aplicação está configurada para conectar com uma API local na porta 8000. C
 ### Home (`/`)
 
 - Tela de boas-vindas após login
-- Cards de navegação para funcionalidades
-- Menu de usuário no header
+- Filtros de pesquisa de viagens
+- Lista de viagens
 
 ## 🔐 Autenticação
 
@@ -98,12 +98,6 @@ O sistema de autenticação inclui:
 - **Persistência de token** - Armazenamento no localStorage
 - **Validação de sessão** - Verificação automática de autenticação
 
-## 🎨 Design
-
-- **Tema moderno** com gradientes e efeitos de vidro
-- **Componentes Quasar** para interface consistente
-- **Responsivo** - Funciona em desktop e mobile
-- **Animações suaves** - Transições e hover effects
 
 ## 📁 Estrutura do Projeto
 
@@ -124,18 +118,3 @@ src/
 - `npm run preview` - Preview do build
 - `npm run lint` - Linting do código
 - `npm run format` - Formatação do código
-
-## 🔧 Desenvolvimento
-
-Para contribuir com o projeto:
-
-1. Faça um fork do repositório
-2. Crie uma branch para sua feature
-3. Implemente suas mudanças
-4. Execute os testes: `npm run test:unit`
-5. Faça commit das mudanças
-6. Abra um Pull Request
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT.

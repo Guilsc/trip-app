@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import HomeView from '../views/HomeView.vue'
+import LoginView from '../views/LoginView.vue'
+import RegisterView from '../views/RegisterView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,13 +16,13 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import('../views/LoginView.vue'),
+      component: LoginView,
       meta: { requiresGuest: true },
     },
     {
       path: '/register',
       name: 'register',
-      component: () => import('../views/RegisterView.vue'),
+      component: RegisterView,
       meta: { requiresGuest: true },
     }
   ],

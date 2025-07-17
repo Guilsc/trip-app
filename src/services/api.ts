@@ -32,7 +32,7 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     // Se o erro for 401 (Unauthorized) e não for uma tentativa de refresh token já falha
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         const refreshToken = localStorage.getItem('authToken'); // Assumindo que o mesmo token é usado para refresh

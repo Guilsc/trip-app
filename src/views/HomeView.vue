@@ -27,7 +27,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import { tripService } from '@/services/api'
+import { tripService } from '@/services/trip'
 import { useQuasar } from 'quasar'
 import type { QTableProps } from 'quasar'
 import WelcomeCard from '@/components/WelcomeCard.vue'

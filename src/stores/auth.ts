@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { authService } from '@/services/api'
+import { authService } from '@/services/auth'
 
 export interface User {
   id: number

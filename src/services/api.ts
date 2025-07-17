@@ -60,22 +60,4 @@ api.interceptors.response.use(
   }
 );
 
-// --- Autenticação ---
-export const authService = {
-  register: (userData: any) => api.post('/register', userData),
-  login: (credentials: any) => api.post('/login', credentials),
-  refresh: () => api.post('/refresh'),
-  getUser: () => api.get('/user'),
-  logout: () => api.post('/logout'),
-};
-
-// --- Solicitações de Viagem ---
-export const tripService = {
-  createTripRequest: (tripData: any) => api.post('/trip-requests', tripData),
-  listTripRequests: (params?: any) => api.get('/trip-requests', { params }),
-  getTripRequest: (id: string | number) => api.get(`/trip-requests/${id}`),
-  updateTripRequestStatus: (id: string | number, statusData: { status: string }) =>
-    api.patch(`/trip-requests/${id}/status`, statusData),
-};
-
 export default api;
